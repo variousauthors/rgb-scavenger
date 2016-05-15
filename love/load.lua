@@ -24,18 +24,44 @@ function love.load()
         height = 5,
         cell_dim = 5,
         cell_gutter = 3,
-        scale = 5,
+        scale = 4,
     }
     game.world = { }
     game.state = { }
 
-    game.world.board = build_board(game.constants.width, game.constants.height)
+    game.world = build_world(game.constants.width, game.constants.height, 0)
 
     game.player = {}
     game.player.cursor = {
-        x = math.ceil(game.world.board.width / 2),
-        y = math.ceil(game.world.board.height / 2),
+        x = math.ceil(game.world.width / 2),
+        y = math.ceil(game.world.height / 2),
     }
+end
+
+function build_world (width, height, depth)
+    local world
+
+    if depth == 0 then
+        world = build_board(width, height)
+    else
+        world = {}
+
+        for y = 1, height, 1 do
+            world[y] = {}
+
+            for x = 1, width, 1 do
+                world[y][x] = build_world(width, height, depth - 1)
+
+                -- TODO each world cell also needs its r, g, b and ratio values
+                -- but these will be averaged across the cells it contains
+                -- so iteratenover world[y][x]'s cells and average their rgb ratios
+            end
+        end
+    end
+
+    world.depth = depth
+
+    return world
 end
 
 function build_board (width, height)

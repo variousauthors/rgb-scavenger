@@ -5,7 +5,7 @@ function love.draw ()
     love.graphics.scale(game.constants.scale, game.constants.scale)
     -- Draw here
 
-    board_draw(game.world.board)
+    board_draw(game.world)
 
     cursor_draw(game.player.cursor)
 
