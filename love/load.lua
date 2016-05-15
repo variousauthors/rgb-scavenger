@@ -3,6 +3,11 @@ GREEN = "green"
 BLUE = "blue"
 WHITE = "white"
 
+UP = "up"
+DOWN = "down"
+LEFT = "left"
+RIGHT = "right"
+
 RGB_COLORS = {
     red = { 255, 0, 0 },
     green = { 0, 255, 0 },
@@ -18,7 +23,7 @@ function love.load()
         width = 5,
         height = 5,
         cell_dim = 5,
-        offset = 5,
+        cell_gutter = 3,
         scale = 5,
     }
     game.world = { }
@@ -28,8 +33,8 @@ function love.load()
 
     game.player = {}
     game.player.cursor = {
-        x = game.world.board.width / 2,
-        y = game.world.board.height / 2,
+        x = math.ceil(game.world.board.width / 2),
+        y = math.ceil(game.world.board.height / 2),
     }
 end
 
