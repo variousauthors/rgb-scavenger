@@ -30,6 +30,13 @@ function love.load()
         cell_dim = 5,
         cell_gutter = 3,
         scale = 4,
+        r_max = 10,
+        g_max = 10,
+        b_max = 10,
+        indicator = {
+            w = 3,
+            h = 5,
+        },
     }
 
     game.constants.center_x = math.ceil(game.constants.width / 2)
@@ -40,7 +47,15 @@ function love.load()
 
     game.world = build_world(game.constants.width, game.constants.height, 2)
 
-    game.player = {}
+    game.player = {
+        r = 10,
+        r_thresh = 1,
+        g = 10,
+        g_thresh = 3,
+        b = 10,
+        b_thresh = 6,
+    }
+
     game.player.path = { 
         {
             world = game.world, 
@@ -91,11 +106,7 @@ function build_world (width, height, depth, rates)
                 local cell = world.cells[y][x]
                 local subworld = build_world(width, height, depth - 1, cell.ratios)
 
-                subworld.r = cell.r
-                subworld.g = cell.g
-                subworld.b = cell.b
-                subworld.middle = cell.middle
-                subworld.ratios = cell.ratios
+                subworld_extend(subworld, cell)
 
                 world.cells[y][x] = subworld
             end
@@ -103,6 +114,15 @@ function build_world (width, height, depth, rates)
     end
 
     return world
+end
+
+function subworld_extend (subworld, cell)
+    subworld.r = cell.r
+    subworld.g = cell.g
+    subworld.b = cell.b
+    subworld.middle = cell.middle
+    subworld.explored = cell.explored
+    subworld.ratios = cell.ratios
 end
 
 function build_board (width, height, rates)
@@ -117,6 +137,7 @@ function build_board (width, height, rates)
                 g = math.random(255) * rates.g,
                 b = math.random(255) * rates.b,
                 middle = false,
+                explored = false,
             }
 
             if y == math.ceil(height/2) and x == math.ceil(width/2) then
@@ -125,6 +146,7 @@ function build_board (width, height, rates)
                 cell.b = 0
 
                 cell.middle = true
+                cell.explored = true
             end
 
             local total = cell.r + cell.g + cell.b

@@ -11,9 +11,12 @@ function love.update(dt)
         if input == LEFT then player.cursor.x = player.cursor.x - 1 end
         if input == RIGHT then player.cursor.x = player.cursor.x + 1 end
 
+        local current_world = player.path[#(player.path)].world
+        local cell = current_world.cells[player.cursor.y][player.cursor.x]
+
+        cell.explored = true
+
         if input == SELECT then
-            local current_world = player.path[#(player.path)].world
-            local cell = current_world.cells[player.cursor.y][player.cursor.x]
 
             if cell.middle ~= true then
                 table.insert(player.path, {

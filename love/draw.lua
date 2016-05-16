@@ -5,7 +5,15 @@ function love.draw ()
     love.graphics.scale(game.constants.scale, game.constants.scale)
     -- Draw here
 
-    local player = game.player
+    world_draw(game.player)
+
+    status_draw(game.player)
+
+    love.graphics.pop()
+end
+
+function world_draw (player)
+    love.graphics.push()
     local length = #(player.path)
 
     for i = 1, length, 1 do
@@ -20,6 +28,39 @@ function love.draw ()
 
         love.graphics.translate(50, 0)
     end
+    love.graphics.pop()
+end
+
+function status_draw (player)
+    love.graphics.push()
+
+    local indicator = game.constants.indicator
+    local base_y = 50
+    local increment = 9
+
+    for i = 1, player.r, 1 do
+        love.graphics.setColor(RGB_COLORS[RED])
+        love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y, indicator.w, indicator.h)
+    end
+
+    love.graphics.setColor(RGB_COLORS[WHITE])
+    love.graphics.rectangle("fill", (player.r_thresh - 1)*indicator.w + player.r_thresh + 1, base_y - 2, 1, 1)
+
+    for i = 1, player.g, 1 do
+        love.graphics.setColor(RGB_COLORS[GREEN])
+        love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y + increment, indicator.w, indicator.h)
+    end
+
+    love.graphics.setColor(RGB_COLORS[WHITE])
+    love.graphics.rectangle("fill", (player.g_thresh - 1)*indicator.w + player.g_thresh + 1, base_y + increment - 2, 1, 1)
+
+    for i = 1, player.b, 1 do
+        love.graphics.setColor(RGB_COLORS[BLUE])
+        love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y + 2*increment, indicator.w, indicator.h)
+    end
+
+    love.graphics.setColor(RGB_COLORS[WHITE])
+    love.graphics.rectangle("fill", (player.b_thresh - 1)*indicator.w + player.b_thresh + 1, base_y + 2*increment - 2, 1, 1)
 
     love.graphics.pop()
 end
@@ -50,6 +91,7 @@ function board_draw (board)
     for y = 1, board.height, 1 do
         for x = 1, board.width, 1 do
             local cell = board[y][x]
+
             local dim = game.constants.cell_dim
             local offset = game.constants.cell_gutter
             local y = (y - 1) * dim + (y * offset)
@@ -59,21 +101,26 @@ function board_draw (board)
             local g_width = dim * cell.ratios.g
             local b_width = dim * cell.ratios.b
 
-            love.graphics.setColor(RGB_COLORS[RED])
-            local pos_x = x + 0
+            if cell.explored == true then
+                love.graphics.setColor(RGB_COLORS[RED])
+                local pos_x = x + 0
 
-            love.graphics.rectangle('fill', pos_x, y, r_width, dim)
+                love.graphics.rectangle('fill', pos_x, y, r_width, dim)
 
-            love.graphics.setColor(RGB_COLORS[GREEN])
-            pos_x = pos_x + r_width
+                love.graphics.setColor(RGB_COLORS[GREEN])
+                pos_x = pos_x + r_width
 
-            love.graphics.rectangle('fill', pos_x, y, g_width, dim)
+                love.graphics.rectangle('fill', pos_x, y, g_width, dim)
 
-            love.graphics.setColor(RGB_COLORS[BLUE])
-            pos_x = pos_x + g_width
+                love.graphics.setColor(RGB_COLORS[BLUE])
+                pos_x = pos_x + g_width
 
-            love.graphics.rectangle('fill', pos_x, y, b_width, dim)
-            pos_x = pos_x + b_width
+                love.graphics.rectangle('fill', pos_x, y, b_width, dim)
+                pos_x = pos_x + b_width
+            else
+                love.graphics.setColor({ cell.r, cell.g, cell.b })
+                love.graphics.rectangle('fill', x, y, dim, dim)
+            end
 
         end
     end
