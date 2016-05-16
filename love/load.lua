@@ -38,14 +38,10 @@ function love.load()
     }
 end
 
-function board_get_average_values (board)
+function board_get_average_rates (board)
     local avgs = {}
     local sums = {r = 0, g = 0, b = 0 }
     local total = board.height * board.width
-
-    print("board", inspect(board))
-    print("board[y]", inspect(board[1]))
-    print("board[1][1]", inspect(board[1][1]))
 
     for y = 1, board.height, 1 do
         for x = 1, board.width, 1 do
@@ -57,9 +53,9 @@ function board_get_average_values (board)
         end
     end
 
-    avgs.r = sums.r / total
-    avgs.g = sums.g / total
-    avgs.b = sums.b / total
+    avgs.r = (sums.r / total) / 255
+    avgs.g = (sums.g / total) / 255
+    avgs.b = (sums.b / total) / 255
 
     return avgs
 end
@@ -77,9 +73,8 @@ function build_world (width, height, depth, rates)
 
         for y = 1, height, 1 do
             for x = 1, width, 1 do
-                local avgs = board_get_average_values(world.cells)
                 local cell = world.cells[y][x]
-                local subworld = build_world(width, height, depth - 1, avgs)
+                local subworld = build_world(width, height, depth - 1, cell.ratios)
 
                 subworld.r = cell.r
                 subworld.g = cell.g
@@ -102,9 +97,9 @@ function build_board (width, height, rates)
 
         for x = 1, width, 1 do
             local cell = {
-                r = math.random(255),
-                g = math.random(255),
-                b = math.random(255),
+                r = math.random(255) * rates.r,
+                g = math.random(255) * rates.g,
+                b = math.random(255) * rates.b,
             }
 
             local total = cell.r + cell.g + cell.b
