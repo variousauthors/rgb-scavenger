@@ -29,42 +29,72 @@ function love.load()
     game.world = { }
     game.state = { }
 
-    game.world = build_world(game.constants.width, game.constants.height, 0)
+    game.world = build_world(game.constants.width, game.constants.height, 1)
 
     game.player = {}
     game.player.cursor = {
-        x = math.ceil(game.world.width / 2),
-        y = math.ceil(game.world.height / 2),
+        x = math.ceil(game.constants.width / 2),
+        y = math.ceil(game.constants.height / 2),
     }
 end
 
-function build_world (width, height, depth)
-    local world
+function board_get_average_values (board)
+    local avgs = {}
+    local sums = {r = 0, g = 0, b = 0 }
+    local total = board.height * board.width
 
-    if depth == 0 then
-        world = build_board(width, height)
-    else
-        world = {}
+    print("board", inspect(board))
+    print("board[y]", inspect(board[1]))
+    print("board[1][1]", inspect(board[1][1]))
+
+    for y = 1, board.height, 1 do
+        for x = 1, board.width, 1 do
+            local cell = board[y][x]
+
+            sums.r = sums.r + cell.r
+            sums.g = sums.g + cell.g
+            sums.b = sums.b + cell.b
+        end
+    end
+
+    avgs.r = sums.r / total
+    avgs.g = sums.g / total
+    avgs.b = sums.b / total
+
+    return avgs
+end
+
+function build_world (width, height, depth, rates)
+    local rates = rates or { r = 1, g = 1, b = 1 }
+    local world = {}
+
+    world.cells = build_board(width, height, rates)
+    world.height = world.cells.height
+    world.width = world.cells.width
+    world.depth = depth
+
+    if depth > 0 then
 
         for y = 1, height, 1 do
-            world[y] = {}
-
             for x = 1, width, 1 do
-                world[y][x] = build_world(width, height, depth - 1)
+                local avgs = board_get_average_values(world.cells)
+                local cell = world.cells[y][x]
+                local subworld = build_world(width, height, depth - 1, avgs)
 
-                -- TODO each world cell also needs its r, g, b and ratio values
-                -- but these will be averaged across the cells it contains
-                -- so iteratenover world[y][x]'s cells and average their rgb ratios
+                subworld.r = cell.r
+                subworld.g = cell.g
+                subworld.b = cell.b
+                subworld.ratios = cell.ratios
+
+                world.cells[y][x] = subworld
             end
         end
     end
 
-    world.depth = depth
-
     return world
 end
 
-function build_board (width, height)
+function build_board (width, height, rates)
     local board = {}
 
     for y = 1, height, 1 do
