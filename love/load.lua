@@ -8,6 +8,11 @@ DOWN = "down"
 LEFT = "left"
 RIGHT = "right"
 
+SELECT = "select"
+ESCAPE = "escape"
+
+TOP = { x = -1, y = -1 }
+
 RGB_COLORS = {
     red = { 255, 0, 0 },
     green = { 0, 255, 0 },
@@ -26,15 +31,25 @@ function love.load()
         cell_gutter = 3,
         scale = 4,
     }
+
+    game.constants.center_x = math.ceil(game.constants.width / 2)
+    game.constants.center_y = math.ceil(game.constants.height / 2)
+
     game.world = { }
     game.state = { }
 
-    game.world = build_world(game.constants.width, game.constants.height, 1)
+    game.world = build_world(game.constants.width, game.constants.height, 2)
 
     game.player = {}
+    game.player.path = { 
+        {
+            world = game.world, 
+            entrance = { x = -1, y = -1 } 
+        }
+    }
     game.player.cursor = {
-        x = math.ceil(game.constants.width / 2),
-        y = math.ceil(game.constants.height / 2),
+        x = game.constants.center_x,
+        y = game.constants.center_y,
     }
 end
 
@@ -79,6 +94,7 @@ function build_world (width, height, depth, rates)
                 subworld.r = cell.r
                 subworld.g = cell.g
                 subworld.b = cell.b
+                subworld.middle = cell.middle
                 subworld.ratios = cell.ratios
 
                 world.cells[y][x] = subworld
@@ -100,7 +116,16 @@ function build_board (width, height, rates)
                 r = math.random(255) * rates.r,
                 g = math.random(255) * rates.g,
                 b = math.random(255) * rates.b,
+                middle = false,
             }
+
+            if y == math.ceil(height/2) and x == math.ceil(width/2) then
+                cell.r = 0
+                cell.g = 0
+                cell.b = 0
+
+                cell.middle = true
+            end
 
             local total = cell.r + cell.g + cell.b
 

@@ -5,12 +5,21 @@ function love.draw ()
     love.graphics.scale(game.constants.scale, game.constants.scale)
     -- Draw here
 
-    board_draw(game.world.cells, 0, 0)
-    board_draw(game.world.cells[1][1].cells, 50, 0)
-    board_draw(game.world.cells[1][2].cells, 0, 50)
-    board_draw(game.world.cells[1][3].cells, 50, 50)
+    local player = game.player
+    local length = #(player.path)
 
-    cursor_draw(game.player.cursor)
+    for i = 1, length, 1 do
+
+        local world = player.path[i].world
+
+        board_draw(world.cells)
+
+        if i == length then
+            cursor_draw(game.player.cursor)
+        end
+
+        love.graphics.translate(50, 0)
+    end
 
     love.graphics.pop()
 end
@@ -35,7 +44,7 @@ function cursor_draw (cursor)
     love.graphics.pop()
 end
 
-function board_draw (board, base_x, base_y)
+function board_draw (board)
     love.graphics.push()
 
     for y = 1, board.height, 1 do
@@ -43,8 +52,8 @@ function board_draw (board, base_x, base_y)
             local cell = board[y][x]
             local dim = game.constants.cell_dim
             local offset = game.constants.cell_gutter
-            local y = base_y + (y - 1) * dim + (y * offset)
-            local x = base_x + (x - 1) * dim + (x * offset)
+            local y = (y - 1) * dim + (y * offset)
+            local x = (x - 1) * dim + (x * offset)
 
             local r_width = dim * cell.ratios.r
             local g_width = dim * cell.ratios.g
