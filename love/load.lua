@@ -10,6 +10,7 @@ RIGHT = "right"
 
 SELECT = "select"
 ESCAPE = "escape"
+SPACE = "space"
 
 TOP = { x = -1, y = -1 }
 
@@ -37,13 +38,17 @@ function love.load()
             w = 3,
             h = 5,
         },
+        daylight_max = 20,
     }
 
     game.constants.center_x = math.ceil(game.constants.width / 2)
     game.constants.center_y = math.ceil(game.constants.height / 2)
 
     game.world = { }
-    game.state = { }
+    game.state = { 
+        daylight = game.constants.daylight_max,
+        is_day = true,
+    }
 
     game.world = build_world(game.constants.width, game.constants.height, 2)
 
@@ -51,9 +56,9 @@ function love.load()
         r = 10,
         r_thresh = 1,
         g = 10,
-        g_thresh = 3,
+        g_thresh = 6,
         b = 10,
-        b_thresh = 6,
+        b_thresh = 3,
     }
 
     game.player.path = { 

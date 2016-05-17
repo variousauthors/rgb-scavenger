@@ -62,6 +62,11 @@ function status_draw (player)
     love.graphics.setColor(RGB_COLORS[WHITE])
     love.graphics.rectangle("fill", (player.b_thresh - 1)*indicator.w + player.b_thresh + 1, base_y + 2*increment - 2, 1, 1)
 
+    for i = 1, game.state.daylight, 1 do
+        love.graphics.setColor(RGB_COLORS[WHITE])
+        love.graphics.rectangle("fill", (i - 1) + i, base_y + 3*increment, 1, 1)
+    end
+
     love.graphics.pop()
 end
 
