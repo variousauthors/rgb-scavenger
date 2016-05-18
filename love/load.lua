@@ -65,14 +65,16 @@ function love.load()
     game.player.carry = {
          w = 2,
          h = 4,
-         inventory = { 1, 2, 3, 4, 5, 6, 7 },
+         inventory = { },
     }
+    game.player.carry.max = game.player.carry.w * game.player.carry.h
 
     game.player.store = {
          w = 6,
          h = 4,
          inventory = { },
     }
+    game.player.store.max = game.player.store.w * game.player.store.h
 
     game.player.path = { 
         {
