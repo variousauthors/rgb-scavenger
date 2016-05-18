@@ -67,6 +67,27 @@ function status_draw (player)
         love.graphics.rectangle("fill", (i - 1) + i, base_y + 3*increment, 1, 1)
     end
 
+    base_x = game.constants.stat_max * indicator.w + game.constants.stat_max + 2
+
+    love.graphics.setColor(RGB_COLORS[WHITE])
+    love.graphics.rectangle("line", base_x, base_y + 0.5, player.store.w * (indicator.w) + player.store.w + 1, player.store.h * (indicator.h) + player.store.h + 1)
+
+    for i = 0, #(player.store.inventory) - 1, 1 do
+        local ix = (i % player.store.w)
+        local iy = math.floor(i / player.store.w)
+
+        print(i, ix, iy)
+        love.graphics.setColor(RGB_COLORS[BLUE])
+        love.graphics.rectangle("fill", base_x + ix * indicator.w + ix + 1, base_y + (iy * indicator.h) + iy + 1.5, indicator.w, indicator.h)
+    end
+
+    base_x = base_x + player.store.w * (indicator.w) + player.store.w + 3
+
+    love.graphics.setColor(RGB_COLORS[WHITE])
+    love.graphics.rectangle("line", base_x, base_y + 0.5, player.carry.w * (indicator.w), player.carry.h * (indicator.h))
+
+
+
     love.graphics.pop()
 end
 

@@ -94,21 +94,22 @@ function time_update (player)
             elseif length == 2 then
                 decrement(game.state, "daylight", 1, 0)
             elseif length > 2 then
-
+                -- time dilation: while inside the player does not pass time to take actions
             end
         else
             game.state.is_day = false
         end
     else
-        decrement(player, "r", 1, 0)
 
         if game.state.daylight < game.constants.daylight_max then
             if length == 1 then
                 increment(game.state, "daylight", 2, game.constants.daylight_max)
+                decrement(player, "r", 1, 0)
             elseif length == 2 then
                 increment(game.state, "daylight", 1, game.constants.daylight_max)
+                decrement(player, "r", 1, 0)
             elseif length > 2 then
-
+                -- time dilation: while inside the player does not pass time to take actions
             end
         else
             game.state.is_day = true

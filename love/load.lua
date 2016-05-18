@@ -39,6 +39,7 @@ function love.load()
             h = 5,
         },
         daylight_max = 20,
+        stat_max = 10,
     }
 
     game.constants.center_x = math.ceil(game.constants.width / 2)
@@ -53,12 +54,24 @@ function love.load()
     game.world = build_world(game.constants.width, game.constants.height, 2)
 
     game.player = {
-        r = 10,
+        r = game.constants.stat_max,
         r_thresh = 1,
-        g = 10,
+        g = game.constants.stat_max,
         g_thresh = 6,
-        b = 10,
+        b = game.constants.stat_max,
         b_thresh = 3,
+    }
+
+    game.player.carry = {
+         w = 2,
+         h = 4,
+         inventory = { 1, 2, 3, 4, 5, 6, 7 },
+    }
+
+    game.player.store = {
+         w = 6,
+         h = 4,
+         inventory = { },
     }
 
     game.player.path = { 
