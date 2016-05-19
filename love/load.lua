@@ -8,9 +8,9 @@ DOWN = "down"
 LEFT = "left"
 RIGHT = "right"
 
-SELECT = "select"
+EXPLORE = "select"
 ESCAPE = "escape"
-SPACE = "space"
+INTERACT = "space"
 
 TOP = { x = -1, y = -1 }
 DAYLIGHT = "daylight"
@@ -59,6 +59,7 @@ function love.load()
         daylight_max = 20,
         daylight_min = 0,
         stat_max = 10,
+        base_rates = { r = 0.1, g = 0.1, b = 1 },
     }
 
     game.constants.center_x = math.ceil(game.constants.width / 2)
@@ -74,16 +75,19 @@ function love.load()
 
     game.player = {
         red = game.constants.stat_max,
-        r_thresh = 1,
         green = game.constants.stat_max,
-        g_thresh = 6,
         blue = game.constants.stat_max,
-        b_thresh = 3,
+        thresh = {
+            red = 1,
+            green = 10,
+            blue = 3,
+        },
+        thirsty = false,
     }
 
     game.player.carry = {
          w = 2,
-         h = 4,
+         h = 3,
          inventory = { },
     }
     game.player.carry.max = game.player.carry.w * game.player.carry.h
@@ -130,7 +134,7 @@ function board_get_average_rates (board)
 end
 
 function build_world (width, height, depth, rates)
-    local rates = rates or { r = 1, g = 1, b = 1 }
+    local rates = rates or game.constants.base_rates
     local world = {}
 
     world.cells = build_board(width, height, rates)

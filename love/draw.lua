@@ -43,8 +43,10 @@ function status_draw (player)
         love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y, indicator.w, indicator.h)
     end
 
+    local thresh = player.thresh
+
     love.graphics.setColor(RGB_COLORS[WHITE])
-    love.graphics.rectangle("fill", (player.r_thresh - 1)*indicator.w + player.r_thresh + 1, base_y - 2, 1, 1)
+    love.graphics.rectangle("fill", (thresh[RED] - 1)*indicator.w + thresh[RED] + 1, base_y - 2, 1, 1)
 
     for i = 1, player[GREEN], 1 do
         love.graphics.setColor(RGB_COLORS[GREEN])
@@ -52,7 +54,7 @@ function status_draw (player)
     end
 
     love.graphics.setColor(RGB_COLORS[WHITE])
-    love.graphics.rectangle("fill", (player.g_thresh - 1)*indicator.w + player.g_thresh + 1, base_y + increment - 2, 1, 1)
+    love.graphics.rectangle("fill", (thresh[GREEN] - 1)*indicator.w + thresh[GREEN] + 1, base_y + increment - 2, 1, 1)
 
     for i = 1, player[BLUE], 1 do
         love.graphics.setColor(RGB_COLORS[BLUE])
@@ -60,7 +62,7 @@ function status_draw (player)
     end
 
     love.graphics.setColor(RGB_COLORS[WHITE])
-    love.graphics.rectangle("fill", (player.b_thresh - 1)*indicator.w + player.b_thresh + 1, base_y + 2*increment - 2, 1, 1)
+    love.graphics.rectangle("fill", (thresh[BLUE] - 1)*indicator.w + thresh[BLUE] + 1, base_y + 2*increment - 2, 1, 1)
 
     for i = 1, game.state.daylight, 1 do
         love.graphics.setColor(RGB_COLORS[WHITE])

@@ -16,6 +16,8 @@ function love.update(dt)
 
         if input == UP or input == DOWN or input == LEFT or input == RIGHT then
             player_move(player, input)
+            -- consume 0.5 BLUE
+            -- spend time based on zoom level
         end
 
         local current_world = player.path[#(player.path)].world
@@ -23,37 +25,42 @@ function love.update(dt)
 
         cell.explored = true
 
-        if input == SELECT then
+        if input == EXPLORE then
             player_explore(player, cell)
+            -- at home: eat and sleep
+            --   consumes 1 GREEN
+            --   heals from store
+            -- outside: explore
+            --   goes deeper
         end
 
-        if input == SPACE then
+        if input == INTERACT then
             player_interact(player, cell)
+            -- at home: drop carry
+            -- outside: get items
+            --   spend 1 time
         end
 
     end
 
     player.input = nil
-
 end
 
-function player_interact (player, cell)
+function player_store_items (player)
     local inventory = player.carry.inventory
+    local store = player.store.inventory
 
-    if cell.middle == true then
-        local store = player.store.inventory
+    while (#(store) < player.store.max and #(inventory) > 0) do
+        -- transfer one item
 
-        while (#(store) < player.store.max and #(inventory) > 0) do
-            -- transfer one item
-
-            local item = inventory[1]
-            table.remove(inventory, 1)
-            table.insert(store, item)
-        end
-
-        return
+        local item = inventory[1]
+        table.remove(inventory, 1)
+        table.insert(store, item)
     end
+end
 
+function player_collect_items (player, cell)
+    local inventory = player.carry.inventory
     if #(inventory) >= player.carry.max then return end
 
     local rand = math.random()
@@ -69,32 +76,58 @@ function player_interact (player, cell)
     end
 end
 
-function player_consume (player, resource, amount)
+function player_interact (player, cell)
+    if cell.middle == true then
+        player_store_items(player)
+    else
+        player_collect_items(player, cell)
+        time_update(player, 1)
+    end
+end
+
+function player_consume (player, resource)
     local index = first_index_of(player.carry.inventory, resource)
+
+    if resource == BLUE then
+        if player.thirsty == true then
+            player.thirsty = false
+        else
+            player.thirsty = true
+            return
+        end
+    end
 
     if index ~= -1 then
         table.remove(player.carry.inventory, index)
     else
+
+        if player[resource] < player.thresh[resource] then
+            if resource == RED then
+                error("YOU DIED")
+            else
+                player_consume(player, RED)
+            end
+        end
+
         decrement(player, resource, 1, 0)
+
     end
 end
 
-function player_recover (player, resource)
-    local inventory = player.store.inventory
+function player_recover (player, collection)
 
-    for i = #(inventory), 1, -1 do
-        local item = inventory[i]
+    for i = #(collection), 1, -1 do
+        local item = collection[i]
 
         if player[item] < game.constants.stat_max then
             increment(player, item, 1, game.constants.stat_max)
 
-            table.remove(inventory, i)
+            table.remove(collection, i)
         end
     end
 end
 
 function player_explore (player, cell)
-    player_consume(player, BLUE, 1)
 
     if cell.middle ~= true then
         -- zoom into a cell
@@ -114,11 +147,11 @@ function player_explore (player, cell)
             game.state.daylight = game.constants.daylight_max
             game.state.is_day = true
 
-            player_consume(player, GREEN, 1)
+            player_consume(player, GREEN)
 
             -- recover from store
 
-            player_recover(player)
+            player_recover(player, player.store.inventory)
         else
             -- zoom out of a cell
             local entrance = player.path[#(player.path)].entrance
@@ -139,7 +172,7 @@ function player_move (player, input)
     if input == RIGHT then player.cursor.x = player.cursor.x + 1; did_move = true end
 
     if did_move == true then
-        player_consume(player, BLUE, 1)
+        player_consume(player, BLUE)
 
         local length = #(player.path)
 
@@ -165,7 +198,7 @@ function time_update (player, time)
     else
         if game.state.daylight < game.constants.daylight_max then
             increment(game.state, DAYLIGHT, time, game.constants.daylight_max)
-            player_consume(player, RED, 1)
+            player_consume(player, RED)
         else
             game.state.is_day = true
         end
