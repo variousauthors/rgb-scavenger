@@ -13,6 +13,7 @@ ESCAPE = "escape"
 SPACE = "space"
 
 TOP = { x = -1, y = -1 }
+DAYLIGHT = "daylight"
 
 RGB_COLORS = {
     red = { 255, 0, 0 },
@@ -56,6 +57,7 @@ function love.load()
             h = 5,
         },
         daylight_max = 20,
+        daylight_min = 0,
         stat_max = 10,
     }
 

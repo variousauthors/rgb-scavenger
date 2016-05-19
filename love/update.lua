@@ -16,10 +16,6 @@ function love.update(dt)
 
         if input == UP or input == DOWN or input == LEFT or input == RIGHT then
             player_move(player, input)
-            time_update(player)
-        end
-
-        if did_move == true then
         end
 
         local current_world = player.path[#(player.path)].world
@@ -102,41 +98,41 @@ function player_explore (player, cell)
 end
 
 function player_move (player, input)
+    local did_move = false
+
     if input == UP then player.cursor.y = player.cursor.y - 1; did_move = true end
     if input == DOWN then player.cursor.y = player.cursor.y + 1; did_move = true end
     if input == LEFT then player.cursor.x = player.cursor.x - 1; did_move = true end
     if input == RIGHT then player.cursor.x = player.cursor.x + 1; did_move = true end
 
-    player_consume(player, BLUE, 1)
+    if did_move == true then
+        player_consume(player, BLUE, 1)
+
+        local length = #(player.path)
+
+        if length == 1 then
+            time_update(player, 2)
+        elseif length == 2 then
+            time_update(player, 1)
+        elseif length > 2 then
+            -- time dilation: while inside the player does not pass time to take actions
+        end
+    end
 end
 
-function time_update (player) 
+function time_update (player, time) 
     local length = #(player.path)
 
     if game.state.is_day == true then
-        if game.state.daylight > 0 then
-            if length == 1 then
-                decrement(game.state, "daylight", 2, 0)
-            elseif length == 2 then
-                decrement(game.state, "daylight", 1, 0)
-            elseif length > 2 then
-                -- time dilation: while inside the player does not pass time to take actions
-            end
+        if game.state.daylight > game.constants.daylight_min then
+            decrement(game.state, DAYLIGHT, time, game.constants.daylight_min)
         else
             game.state.is_day = false
         end
     else
-
         if game.state.daylight < game.constants.daylight_max then
-            if length == 1 then
-                increment(game.state, "daylight", 2, game.constants.daylight_max)
-                player_consume(player, RED, 1)
-            elseif length == 2 then
-                increment(game.state, "daylight", 1, game.constants.daylight_max)
-                player_consume(player, RED, 1)
-            elseif length > 2 then
-                -- time dilation: while inside the player does not pass time to take actions
-            end
+            increment(game.state, DAYLIGHT, time, game.constants.daylight_max)
+            player_consume(player, RED, 1)
         else
             game.state.is_day = true
         end
