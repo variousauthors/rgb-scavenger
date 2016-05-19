@@ -38,28 +38,58 @@ function love.update(dt)
 end
 
 function player_interact (player, cell)
-    if cell.middle == true then return end
-    if #(player.carry.inventory) >= player.carry.max then return end
+    local inventory = player.carry.inventory
+
+    if cell.middle == true then
+        local store = player.store.inventory
+
+        while (#(store) < player.store.max and #(inventory) > 0) do
+            -- transfer one item
+
+            local item = inventory[1]
+            table.remove(inventory, 1)
+            table.insert(store, item)
+        end
+
+        return
+    end
+
+    if #(inventory) >= player.carry.max then return end
 
     local rand = math.random()
     local ratios = cell.ratios
     local r, g, b = ratios.r, ratios.g, ratios.b
 
     if rand <= r then
-        table.insert(player.carry.inventory, RED)
+        table.insert(inventory, RED)
     elseif rand <= r + g then
-        table.insert(player.carry.inventory, GREEN)
+        table.insert(inventory, GREEN)
     elseif rand > g then
-        table.insert(player.carry.inventory, BLUE)
+        table.insert(inventory, BLUE)
     end
 end
 
 function player_consume (player, resource, amount)
     local index = first_index_of(player.carry.inventory, resource)
-    if index == -1 then
-        decrement(player, resource, 1, 0)
-    else
+
+    if index ~= -1 then
         table.remove(player.carry.inventory, index)
+    else
+        decrement(player, resource, 1, 0)
+    end
+end
+
+function player_recover (player, resource)
+    local inventory = player.store.inventory
+
+    for i = #(inventory), 1, -1 do
+        local item = inventory[i]
+
+        if player[item] < game.constants.stat_max then
+            increment(player, item, 1, game.constants.stat_max)
+
+            table.remove(inventory, i)
+        end
     end
 end
 
@@ -67,6 +97,7 @@ function player_explore (player, cell)
     player_consume(player, BLUE, 1)
 
     if cell.middle ~= true then
+        -- zoom into a cell
         table.insert(player.path, {
             world = cell,
             entrance = {
@@ -83,11 +114,13 @@ function player_explore (player, cell)
             game.state.daylight = game.constants.daylight_max
             game.state.is_day = true
 
-            if game.state.is_day == true then
-                player_consume(player, GREEN, 1)
-            end
+            player_consume(player, GREEN, 1)
+
+            -- recover from store
+
+            player_recover(player)
         else
-            -- explore more deeply
+            -- zoom out of a cell
             local entrance = player.path[#(player.path)].entrance
             table.remove(player.path)
 
