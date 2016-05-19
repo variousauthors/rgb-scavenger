@@ -67,7 +67,7 @@ function status_draw (player)
         love.graphics.rectangle("fill", (i - 1) + i, base_y + 3*increment, 1, 1)
     end
 
-    -- now display the store and carry
+    -- now display the store
 
     base_x = game.constants.stat_max * indicator.w + game.constants.stat_max + 2
 
@@ -83,7 +83,9 @@ function status_draw (player)
         love.graphics.rectangle("fill", base_x + ix * indicator.w + ix + 1, base_y + (iy * indicator.h) + iy + 1.5, indicator.w, indicator.h)
     end
 
-    base_x = base_x + player.store.w * (indicator.w) + player.store.w + 3
+    -- now display the carry
+
+    base_x = base_x + player.store.w * (indicator.w) + player.store.w + 3 -- needs to be three
 
     love.graphics.setColor(RGB_COLORS[WHITE])
     love.graphics.rectangle("line", base_x, base_y + 0.5, player.carry.w * (indicator.w) + player.carry.w + 1, player.carry.h * (indicator.h) + player.carry.h + 1)

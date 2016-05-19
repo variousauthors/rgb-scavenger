@@ -45,28 +45,16 @@ function player_interact (player, cell)
     if cell.middle == true then return end
     if #(player.carry.inventory) >= player.carry.max then return end
 
-    local r_get = cell.ratios.r * math.random()
-    local g_get = cell.ratios.g * math.random()
-    local b_get = cell.ratios.b * math.random()
+    local rand = math.random()
+    local ratios = cell.ratios
+    local r, g, b = ratios.r, ratios.g, ratios.b
 
-    local get = math.max(r_get, math.max(g_get, b_get))
-
-    if r_get > g_get then
-        if r_get > b_get then
-            table.insert(player.carry.inventory, RED)
-            print(RED, inspect(player.carry.inventory))
-        else
-            table.insert(player.carry.inventory, BLUE)
-            print(BLUE, inspect(player.carry.inventory))
-        end
-    else
-        if g_get > b_get then
-            table.insert(player.carry.inventory, GREEN)
-            print(GREEN, inspect(player.carry.inventory))
-        else
-            table.insert(player.carry.inventory, BLUE)
-            print(BLUE, inspect(player.carry.inventory))
-        end
+    if rand <= r then
+        table.insert(player.carry.inventory, RED)
+    elseif rand <= r + g then
+        table.insert(player.carry.inventory, GREEN)
+    elseif rand > g then
+        table.insert(player.carry.inventory, BLUE)
     end
 end
 

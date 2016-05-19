@@ -3,7 +3,7 @@
 local controls = {
     select = {'k_return', 'j1_a'},
     escape = {'k_escape'},
-    space = {'k_j'},
+    space = {'k_space'},
     up = { 'k_w', 'k_up' },
     down = { 'k_s', 'k_down' },
     left = { 'k_a', 'k_left' },
