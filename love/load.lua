@@ -21,6 +21,23 @@ RGB_COLORS = {
     white = { 255, 255, 255 },
 }
 
+function first_index_of(table, element)
+    local index = -1
+    local i = 1
+
+    while (index == -1 and i <= #(table)) do
+        local item = table[i]
+
+        if item == element then
+            index = i
+        end
+
+        i = i + 1
+    end
+
+    return index
+end
+
 function love.load()
     require('game/controls')
     require('game/sounds')
@@ -54,11 +71,11 @@ function love.load()
     game.world = build_world(game.constants.width, game.constants.height, 2)
 
     game.player = {
-        r = game.constants.stat_max,
+        red = game.constants.stat_max,
         r_thresh = 1,
-        g = game.constants.stat_max,
+        green = game.constants.stat_max,
         g_thresh = 6,
-        b = game.constants.stat_max,
+        blue = game.constants.stat_max,
         b_thresh = 3,
     }
 

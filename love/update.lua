@@ -70,8 +70,17 @@ function player_interact (player, cell)
     end
 end
 
+function player_consume (player, resource, amount)
+    local index = first_index_of(player.carry.inventory, resource)
+    if index == -1 then
+        decrement(player, resource, 1, 0)
+    else
+        table.remove(player.carry.inventory, index)
+    end
+end
+
 function player_explore (player, cell)
-    decrement(player, "b", 1, 0)
+    player_consume(player, BLUE, 1)
 
     if cell.middle ~= true then
         table.insert(player.path, {
@@ -91,7 +100,7 @@ function player_explore (player, cell)
             game.state.is_day = true
 
             if game.state.is_day == true then
-                decrement(player, "g", 1, 0)
+                player_consume(player, GREEN, 1)
             end
         else
             -- explore more deeply
@@ -110,7 +119,7 @@ function player_move (player, input)
     if input == LEFT then player.cursor.x = player.cursor.x - 1; did_move = true end
     if input == RIGHT then player.cursor.x = player.cursor.x + 1; did_move = true end
 
-    decrement(player, "b", 1, 0)
+    player_consume(player, BLUE, 1)
 end
 
 function time_update (player) 
@@ -133,10 +142,10 @@ function time_update (player)
         if game.state.daylight < game.constants.daylight_max then
             if length == 1 then
                 increment(game.state, "daylight", 2, game.constants.daylight_max)
-                decrement(player, "r", 1, 0)
+                player_consume(player, RED, 1)
             elseif length == 2 then
                 increment(game.state, "daylight", 1, game.constants.daylight_max)
-                decrement(player, "r", 1, 0)
+                player_consume(player, RED, 1)
             elseif length > 2 then
                 -- time dilation: while inside the player does not pass time to take actions
             end

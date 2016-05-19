@@ -38,7 +38,7 @@ function status_draw (player)
     local base_y = 50
     local increment = 9
 
-    for i = 1, player.r, 1 do
+    for i = 1, player[RED], 1 do
         love.graphics.setColor(RGB_COLORS[RED])
         love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y, indicator.w, indicator.h)
     end
@@ -46,7 +46,7 @@ function status_draw (player)
     love.graphics.setColor(RGB_COLORS[WHITE])
     love.graphics.rectangle("fill", (player.r_thresh - 1)*indicator.w + player.r_thresh + 1, base_y - 2, 1, 1)
 
-    for i = 1, player.g, 1 do
+    for i = 1, player[GREEN], 1 do
         love.graphics.setColor(RGB_COLORS[GREEN])
         love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y + increment, indicator.w, indicator.h)
     end
@@ -54,7 +54,7 @@ function status_draw (player)
     love.graphics.setColor(RGB_COLORS[WHITE])
     love.graphics.rectangle("fill", (player.g_thresh - 1)*indicator.w + player.g_thresh + 1, base_y + increment - 2, 1, 1)
 
-    for i = 1, player.b, 1 do
+    for i = 1, player[BLUE], 1 do
         love.graphics.setColor(RGB_COLORS[BLUE])
         love.graphics.rectangle("fill", (i - 1)*indicator.w + i, base_y + 2*increment, indicator.w, indicator.h)
     end
