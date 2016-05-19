@@ -78,7 +78,9 @@ end
 
 function player_interact (player, cell)
     if cell.middle == true then
-        player_store_items(player)
+        if #(player.path) == 1 then
+            player_store_items(player)
+        end
     else
         player_collect_items(player, cell)
         time_update(player, 1)
