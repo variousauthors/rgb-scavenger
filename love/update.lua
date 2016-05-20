@@ -66,13 +66,26 @@ function player_collect_items (player, cell)
     local rand = math.random()
     local ratios = cell.ratios
     local r, g, b = ratios.r, ratios.g, ratios.b
+    local get = false
 
     if rand <= r then
         table.insert(inventory, RED)
+        ratios.r = ratios.r
+        get = true
     elseif rand <= r + g then
         table.insert(inventory, GREEN)
-    elseif rand > g then
+        ratios.g = ratios.g
+        get = true
+    elseif rand <= r + g + b then
         table.insert(inventory, BLUE)
+        ratios.b = ratios.b
+        get = true
+    end
+
+    if get == true then
+        love.soundman.run('beep')
+    else
+        love.soundman.run('boop')
     end
 end
 

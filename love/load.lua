@@ -79,7 +79,7 @@ function love.load()
         blue = game.constants.stat_max,
         thresh = {
             red = 1,
-            green = 10,
+            green = 9,
             blue = 3,
         },
         thirsty = false,
